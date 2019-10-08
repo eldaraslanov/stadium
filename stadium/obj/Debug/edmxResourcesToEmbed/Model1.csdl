@@ -1,0 +1,121 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="edo_stadiumModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="admin">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="emaile" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="password" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="client">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="phone" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="reservs" Relationship="Self.FK_reserv_clients" FromRole="clients" ToRole="reserv" />
+  </EntityType>
+  <EntityType Name="reserv">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="RoomID" Type="Int32" />
+    <Property Name="stadiumID" Type="Int32" />
+    <Property Name="clientID" Type="Int32" />
+    <Property Name="reservdate" Type="DateTime" Precision="3" />
+    <Property Name="reservdeadlien" Type="DateTime" Precision="3" />
+    <Property Name="price" Type="Double" />
+    <NavigationProperty Name="client" Relationship="Self.FK_reserv_clients" FromRole="reserv" ToRole="clients" />
+    <NavigationProperty Name="room" Relationship="Self.FK_reserv_rooms" FromRole="reserv" ToRole="rooms" />
+    <NavigationProperty Name="stadium" Relationship="Self.FK_reserv_stadium" FromRole="reserv" ToRole="stadium" />
+  </EntityType>
+  <EntityType Name="room">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="roomNo" Type="Int32" />
+    <Property Name="roomAd" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="reservs" Relationship="Self.FK_reserv_rooms" FromRole="rooms" ToRole="reserv" />
+    <Property Name="person" Type="Int32" />
+  </EntityType>
+  <EntityType Name="stadium">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="meydanNo" Type="Int32" />
+    <Property Name="meydanAd" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="price" Type="Double" />
+    <NavigationProperty Name="reservs" Relationship="Self.FK_reserv_stadium" FromRole="stadium" ToRole="reserv" />
+  </EntityType>
+  <EntityType Name="sysdiagram">
+    <Key>
+      <PropertyRef Name="diagram_id" />
+    </Key>
+    <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="principal_id" Type="Int32" Nullable="false" />
+    <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="version" Type="Int32" />
+    <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+  </EntityType>
+  <Association Name="FK_reserv_clients">
+    <End Role="clients" Type="Self.client" Multiplicity="0..1" />
+    <End Role="reserv" Type="Self.reserv" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="clients">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="reserv">
+        <PropertyRef Name="clientID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_reserv_rooms">
+    <End Role="rooms" Type="Self.room" Multiplicity="0..1" />
+    <End Role="reserv" Type="Self.reserv" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="rooms">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="reserv">
+        <PropertyRef Name="RoomID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_reserv_stadium">
+    <End Role="stadium" Type="Self.stadium" Multiplicity="0..1" />
+    <End Role="reserv" Type="Self.reserv" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="stadium">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="reserv">
+        <PropertyRef Name="stadiumID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="stadiumDB" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="admins" EntityType="Self.admin" />
+    <EntitySet Name="clients" EntityType="Self.client" />
+    <EntitySet Name="reservs" EntityType="Self.reserv" />
+    <EntitySet Name="rooms" EntityType="Self.room" />
+    <EntitySet Name="stadia" EntityType="Self.stadium" />
+    <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagram" />
+    <AssociationSet Name="FK_reserv_clients" Association="Self.FK_reserv_clients">
+      <End Role="clients" EntitySet="clients" />
+      <End Role="reserv" EntitySet="reservs" />
+    </AssociationSet>
+    <AssociationSet Name="FK_reserv_rooms" Association="Self.FK_reserv_rooms">
+      <End Role="rooms" EntitySet="rooms" />
+      <End Role="reserv" EntitySet="reservs" />
+    </AssociationSet>
+    <AssociationSet Name="FK_reserv_stadium" Association="Self.FK_reserv_stadium">
+      <End Role="stadium" EntitySet="stadia" />
+      <End Role="reserv" EntitySet="reservs" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>
